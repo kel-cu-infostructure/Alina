@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import ru.kelcuprum.alina.Configuration;
+import ru.kelcuprum.alina.config.UserConfig;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,7 @@ import static ru.kelcuprum.alina.Main.Colors.*;
 
 public class PlayerControl extends ListenerAdapter
 {
-    public static final int DEFAULT_VOLUME = Configuration.CURRENT_VOLUME; //(0 - 150, where 100 is default max volume)
+    public static final int DEFAULT_VOLUME = UserConfig.CURRENT_VOLUME; //(0 - 150, where 100 is default max volume)
 
     private static AudioPlayerManager playerManager;
     public static Map<String, GuildMusicManager> musicManagers;
@@ -45,11 +45,11 @@ public class PlayerControl extends ListenerAdapter
         playerManager = new DefaultAudioPlayerManager();
         final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
         youtube.setPlaylistPageCount(100);
-        if(!Configuration.YANDEX_MUSIC_TOKEN.isBlank()) playerManager.registerSourceManager(new YandexMusicSourceManager(Configuration.YANDEX_MUSIC_TOKEN));
-        if(!Configuration.FLOWERY_TTS_VOICE.isBlank()) playerManager.registerSourceManager(new FloweryTTSSourceManager(Configuration.FLOWERY_TTS_VOICE));
-        if(!Configuration.DEEZER_DECRYPTION_KEY.isBlank()) playerManager.registerSourceManager(new DeezerAudioSourceManager(Configuration.DEEZER_DECRYPTION_KEY));
-        if(!Configuration.APPLE_MUSIC_MEDIA_API_TOKEN.isBlank() && !Configuration.APPLE_MUSIC_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new AppleMusicSourceManager(null, Configuration.APPLE_MUSIC_MEDIA_API_TOKEN, Configuration.APPLE_MUSIC_COUNTRY_CODE, playerManager));
-        if(!Configuration.SPOTIFY_CLIENT_ID.isBlank() && !Configuration.SPOTIFY_CLIENT_SECRET.isBlank() && !Configuration.SPOTIFY_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new SpotifySourceManager(null, Configuration.SPOTIFY_CLIENT_ID, Configuration.SPOTIFY_CLIENT_SECRET, Configuration.SPOTIFY_COUNTRY_CODE, playerManager));
+        if(!UserConfig.YANDEX_MUSIC_TOKEN.isBlank()) playerManager.registerSourceManager(new YandexMusicSourceManager(UserConfig.YANDEX_MUSIC_TOKEN));
+        if(!UserConfig.FLOWERY_TTS_VOICE.isBlank()) playerManager.registerSourceManager(new FloweryTTSSourceManager(UserConfig.FLOWERY_TTS_VOICE));
+        if(!UserConfig.DEEZER_DECRYPTION_KEY.isBlank()) playerManager.registerSourceManager(new DeezerAudioSourceManager(UserConfig.DEEZER_DECRYPTION_KEY));
+        if(!UserConfig.APPLE_MUSIC_MEDIA_API_TOKEN.isBlank() && !UserConfig.APPLE_MUSIC_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new AppleMusicSourceManager(null, UserConfig.APPLE_MUSIC_MEDIA_API_TOKEN, UserConfig.APPLE_MUSIC_COUNTRY_CODE, playerManager));
+        if(!UserConfig.SPOTIFY_CLIENT_ID.isBlank() && !UserConfig.SPOTIFY_CLIENT_SECRET.isBlank() && !UserConfig.SPOTIFY_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new SpotifySourceManager(null, UserConfig.SPOTIFY_CLIENT_ID, UserConfig.SPOTIFY_CLIENT_SECRET, UserConfig.SPOTIFY_COUNTRY_CODE, playerManager));
 
 
         playerManager.registerSourceManager(youtube);

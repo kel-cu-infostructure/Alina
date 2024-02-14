@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import ru.kelcuprum.alina.commands.*;
 import ru.kelcuprum.alina.commands.Queue;
+import ru.kelcuprum.alina.config.UserConfig;
 import ru.kelcuprum.alina.music.GuildMusicManager;
 import ru.kelcuprum.alina.music.PlayerControl;
 import ru.kelcuprum.alina.music.TrackScheduler;
@@ -28,11 +29,11 @@ public class Main extends ListenerAdapter
 
     public static void main(String[] args)
             throws IllegalArgumentException, LoginException, RateLimitedException, InterruptedException {
-        Configuration.load();
-        if(Configuration.TOKEN.isBlank()){
+        UserConfig.load();
+        if(UserConfig.TOKEN.isBlank()){
             throw new RuntimeException("Discord token not specified, no launch possible!");
         }
-        bot = JDABuilder.createDefault(Configuration.TOKEN) // Use token provided as JVM argument
+        bot = JDABuilder.createDefault(UserConfig.TOKEN) // Use token provided as JVM argument
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .setActivity(Activity.customStatus("ⓘ Music Bot"))
                 .addEventListeners(new Main())
