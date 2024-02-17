@@ -35,7 +35,7 @@ public class PlayerControl extends ListenerAdapter
 {
     public static final int DEFAULT_VOLUME = UserConfig.CURRENT_VOLUME; //(0 - 150, where 100 is default max volume)
 
-    private static AudioPlayerManager playerManager;
+    public static AudioPlayerManager playerManager;
     public static Map<String, GuildMusicManager> musicManagers;
 
     public PlayerControl()

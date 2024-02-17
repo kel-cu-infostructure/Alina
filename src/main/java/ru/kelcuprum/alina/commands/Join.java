@@ -26,7 +26,7 @@ public class Join {
                 return;
             } else chan = event.getMember().getVoiceState().getChannel().asVoiceChannel();
         } else {
-            if (event.getOption("channel").getAsChannel().getType().name().equals("VOICE")) {
+            if (!event.getOption("channel").getAsChannel().getType().name().equals("VOICE")) {
                 event.replyEmbeds(new EmbedBuilder().setDescription("Это не голосовой канал").setColor(DEFAULT).build()).setEphemeral(true).queue();
                 return;
             } else chan = event.getOption("channel").getAsChannel().asVoiceChannel();

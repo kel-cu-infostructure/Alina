@@ -58,6 +58,12 @@ public class Main extends ListenerAdapter
                 Commands.slash("shuffle", "Перемешать очередь").setGuildOnly(true),
                 Commands.slash("nowplaying", "Что сейчас играет").setGuildOnly(true),
                 Commands.slash("queue", "Очередь треков").setGuildOnly(true)
+//                Commands.slash("search", "Поиск по сервисам").setGuildOnly(true)
+//                        .addOption(OptionType.STRING, "spotify", "Spotify", false)
+//                        .addOption(OptionType.STRING, "yandex", "Яндекс Музыка", false)
+//                        .addOption(OptionType.STRING, "deezer", "Deezer", false)
+//                        .addOption(OptionType.STRING, "apple", "Apple Music", false)
+//                        .addOption(OptionType.STRING, "all", "Из всех", false)
         ).queue();
     }
     @Override
@@ -76,6 +82,7 @@ public class Main extends ListenerAdapter
             case "nowplaying" -> new NowPlaying(event);
             case "shuffle" -> new Shuffle(event);
             case "queue" -> new Queue(event);
+            case "search" -> new Search(event);
         }
     }
 

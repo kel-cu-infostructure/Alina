@@ -26,11 +26,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // Libs
     implementation shade("ch.qos.logback:logback-classic:1.2.8")
-    implementation shade("dev.arbjerg:lavaplayer:2.0.4")
+    implementation shade("dev.arbjerg:lavaplayer:2.1.0")
     implementation shade('net.dv8tion:JDA:5.0.0-beta.20')
     implementation shade("com.github.topi314.lavasrc:lavasrc:4.0.1")
     implementation shade("com.github.topi314.lavasrc:lavasrc-protocol:4.0.1")
-    implementation shade('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT');
+    implementation shade("com.github.topi314.lavasearch:lavasearch:1.0.0")
+    implementation shade("com.github.topi314.lavasearch:lavasearch-protocol:1.0.0")
+    implementation shade('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
     // JSON
     implementation shade("com.google.code.gson:gson:2.10.1")
 
