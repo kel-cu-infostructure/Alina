@@ -36,6 +36,5 @@ public class MusicParser {
         return trackIsNull(track) ? 0 : track.getDuration();
     }
     //
-    public static boolean getIsLive(AudioTrack track){return trackIsNull(track) ? false : track.getInfo().isStream;}
 
 }
