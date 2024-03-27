@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import ru.kelcuprum.alina.Alina;
 import ru.kelcuprum.alina.music.GuildMusicManager;
 import ru.kelcuprum.alina.music.PlayerControl;
 import ru.kelcuprum.alina.music.TrackScheduler;
@@ -22,9 +23,9 @@ public class VoiceListeners extends ListenerAdapter {
                 scheduler.queue.clear();
                 player.destroy();
                 PlayerControl.musicManagers.remove(guild.getId());
-                System.out.printf("Плеер для %s была сброшена!%n", guild.getName());
+                Alina.log(String.format("The player for %s has been reset!", guild.getName()));
             } else {
-                System.out.printf("Я была подключена к  %s на сервере %s!%n", guild.getName(), event.getMember().getVoiceState().getChannel().getName());
+                Alina.log(String.format("I was connected to %s on server %s!", guild.getName(), event.getMember().getVoiceState().getChannel().getName()));
             }
         }
     }
