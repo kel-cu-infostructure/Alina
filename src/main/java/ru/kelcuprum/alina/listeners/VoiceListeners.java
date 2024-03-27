@@ -25,7 +25,7 @@ public class VoiceListeners extends ListenerAdapter {
                 PlayerControl.musicManagers.remove(guild.getId());
                 Alina.log(String.format("The player for %s has been reset!", guild.getName()));
             } else {
-                Alina.log(String.format("I was connected to %s on server %s!", guild.getName(), event.getMember().getVoiceState().getChannel().getName()));
+                Alina.log(String.format("I was connected to %s on server %s!", event.getMember().getVoiceState().getChannel().getName(), guild.getName()));
             }
         }
     }
