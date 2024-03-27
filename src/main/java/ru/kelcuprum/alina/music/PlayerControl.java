@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
@@ -22,43 +23,58 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import ru.kelcuprum.alina.config.UserConfig;
+import ru.kelcuprum.alina.Alina;
+import ru.kelcuprum.alina.config.Config;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static ru.kelcuprum.alina.Main.Colors.*;
+import static ru.kelcuprum.alina.Alina.Colors.*;
 
 public class PlayerControl extends ListenerAdapter
 {
-    public static final int DEFAULT_VOLUME = UserConfig.CURRENT_VOLUME; //(0 - 150, where 100 is default max volume)
+    public static final int DEFAULT_VOLUME = Alina.config.getNumber("CURRENT_VOLUME", 5).intValue();
 
-    public static AudioPlayerManager playerManager;
+    public static AudioPlayerManager audioPlayerManager;
     public static Map<String, GuildMusicManager> musicManagers;
+    public final LocalAudioSourceManager localAudioSourceManager = new LocalAudioSourceManager();
 
     public PlayerControl()
     {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
 
-        playerManager = new DefaultAudioPlayerManager();
-        final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
-        youtube.setPlaylistPageCount(100);
-        if(!UserConfig.YANDEX_MUSIC_TOKEN.isBlank()) playerManager.registerSourceManager(new YandexMusicSourceManager(UserConfig.YANDEX_MUSIC_TOKEN));
-        if(!UserConfig.FLOWERY_TTS_VOICE.isBlank()) playerManager.registerSourceManager(new FloweryTTSSourceManager(UserConfig.FLOWERY_TTS_VOICE));
-        if(!UserConfig.DEEZER_DECRYPTION_KEY.isBlank()) playerManager.registerSourceManager(new DeezerAudioSourceManager(UserConfig.DEEZER_DECRYPTION_KEY));
-        if(!UserConfig.APPLE_MUSIC_MEDIA_API_TOKEN.isBlank() && !UserConfig.APPLE_MUSIC_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new AppleMusicSourceManager(null, UserConfig.APPLE_MUSIC_MEDIA_API_TOKEN, UserConfig.APPLE_MUSIC_COUNTRY_CODE, playerManager));
-        if(!UserConfig.SPOTIFY_CLIENT_ID.isBlank() && !UserConfig.SPOTIFY_CLIENT_SECRET.isBlank() && !UserConfig.SPOTIFY_COUNTRY_CODE.isBlank()) playerManager.registerSourceManager(new SpotifySourceManager(null, UserConfig.SPOTIFY_CLIENT_ID, UserConfig.SPOTIFY_CLIENT_SECRET, UserConfig.SPOTIFY_COUNTRY_CODE, playerManager));
+        audioPlayerManager = new DefaultAudioPlayerManager();
+        Config config = Alina.config;
+        if (!config.getString("YANDEX_MUSIC_TOKEN", "").isBlank())
+            audioPlayerManager.registerSourceManager(new YandexMusicSourceManager(config.getString("YANDEX_MUSIC_TOKEN", "")));
+        if (!config.getString("FLOWERY_TTS_VOICE", "Alena").isBlank())
+            audioPlayerManager.registerSourceManager(new FloweryTTSSourceManager(config.getString("FLOWERY_TTS_VOICE", "Alena")));
+        if (!config.getString("DEEZER_DECRYPTION_KEY", "").isBlank())
+            audioPlayerManager.registerSourceManager(new DeezerAudioSourceManager(config.getString("DEEZER_DECRYPTION_KEY", "")));
+        if (!config.getString("APPLE_MUSIC_MEDIA_API_TOKEN", "").isBlank() && !config.getString("APPLE_MUSIC_COUNTRY_CODE", "us").isBlank())
+            audioPlayerManager.registerSourceManager(new AppleMusicSourceManager(null, config.getString("APPLE_MUSIC_MEDIA_API_TOKEN", ""), config.getString("APPLE_MUSIC_COUNTRY_CODE", "us"), audioPlayerManager));
+        if (!config.getString("SPOTIFY_CLIENT_ID", "").isBlank() && !config.getString("SPOTIFY_CLIENT_SECRET", "").isBlank() && !config.getString("SPOTIFY_COUNTRY_CODE", "US").isBlank())
+            audioPlayerManager.registerSourceManager(new SpotifySourceManager(null, config.getString("SPOTIFY_CLIENT_ID", ""), config.getString("SPOTIFY_CLIENT_SECRET", ""), config.getString("SPOTIFY_COUNTRY_CODE", "US"), audioPlayerManager));
 
-
-        playerManager.registerSourceManager(youtube);
-        playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        playerManager.registerSourceManager(new BandcampAudioSourceManager());
-        playerManager.registerSourceManager(new VimeoAudioSourceManager());
-        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-        playerManager.registerSourceManager(new HttpAudioSourceManager());
-        playerManager.registerSourceManager(new LocalAudioSourceManager());
+        if (config.getBoolean("ENABLE_YOUTUBE", true)) {
+            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
+            youtube.setPlaylistPageCount(100);
+            audioPlayerManager.registerSourceManager(youtube);
+        }
+        if (config.getBoolean("ENABLE_SOUNDCLOUD", true))
+            audioPlayerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        if (config.getBoolean("ENABLE_BANDCAMP", true))
+            audioPlayerManager.registerSourceManager(new BandcampAudioSourceManager());
+        if (config.getBoolean("ENABLE_VIMEO", true))
+            audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
+        if (config.getBoolean("ENABLE_TWITCH", false))
+            audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        if (config.getBoolean("ENABLE_BEAM", true))
+            audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
+        audioPlayerManager.registerSourceManager(localAudioSourceManager);
 
         musicManagers = new HashMap<>();
     }
@@ -74,7 +90,7 @@ public class PlayerControl extends ListenerAdapter
             trackUrl = url;
 
 
-        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler()
+        audioPlayerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler()
         {
             @Override
             public void trackLoaded(AudioTrack track)
@@ -84,7 +100,7 @@ public class PlayerControl extends ListenerAdapter
                 if(track.getInfo().artworkUrl != null) embed.setThumbnail(track.getInfo().artworkUrl);
                 embed.setColor(track.getInfo().isStream ? LIVE : TRACK)
                         .setTitle(MusicParser.getTitle(track), track.getInfo().uri)
-                        .setDescription(mng.player.getPlayingTrack() == null? "Трек был поставлен на воспроизведения" : "Трек добавлен в очередь");
+                        .setDescription(Alina.localization.getLocalization("player.load."+ (mng.player.getPlayingTrack() == null ? "played" : "queue_added")));
                 mng.scheduler.queue(track);
                 event.replyEmbeds(embed.build()).queue();
             }
@@ -102,7 +118,7 @@ public class PlayerControl extends ListenerAdapter
 
                 if (addPlaylist)
                 {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Добавлено **" + playlist.getTracks().size() +"** треков в очередь из плейлиста: " + playlist.getName()).setColor(DEFAULT).build()).setEphemeral(false).queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.load.playlist"), playlist.getTracks().size(), playlist.getName())).build()).queue();
                     tracks.forEach(mng.scheduler::queue);
                 }
                 else
@@ -112,8 +128,8 @@ public class PlayerControl extends ListenerAdapter
                     if(firstTrack.getInfo().artworkUrl != null) embed.setThumbnail(firstTrack.getInfo().artworkUrl);
                     embed.setColor(firstTrack.getInfo().isStream ? LIVE : TRACK)
                             .setTitle(MusicParser.getTitle(firstTrack), firstTrack.getInfo().uri)
-                            .setDescription(mng.player.getPlayingTrack() == null? "Трек был поставлен на воспроизведения" : "Трек добавлен в очередь")
-                            .setFooter("Первый трек из плейлиста " + playlist.getName());
+                            .setDescription(Alina.localization.getLocalization("player.load."+ (mng.player.getPlayingTrack() == null ? "played" : "queue_added")))
+                            .setFooter(String.format(Alina.localization.getLocalization("player.load.first_playlist"), playlist.getName()));
                     mng.scheduler.queue(firstTrack);
                     event.replyEmbeds(embed.build()).queue();
                 }
@@ -122,13 +138,13 @@ public class PlayerControl extends ListenerAdapter
             @Override
             public void noMatches()
             {
-                event.replyEmbeds(new EmbedBuilder().setDescription("Ничего не найдено по " + trackUrl).setColor(DEFAULT).build()).setEphemeral(true).queue();
+                event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.no_matches"), trackUrl)).setColor(DEFAULT).build()).setEphemeral(true).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException exception)
             {
-                event.replyEmbeds(new EmbedBuilder().setDescription("Не удалось воспроизвести: " + exception.getMessage()).setColor(DEFAULT).build()).setEphemeral(true).queue();
+                event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.load_failed"), exception.getMessage())).setColor(DEFAULT).build()).setEphemeral(true).queue();
             }
         });
     }
@@ -144,7 +160,7 @@ public class PlayerControl extends ListenerAdapter
                 mng = musicManagers.get(guildId);
                 if (mng == null)
                 {
-                    mng = new GuildMusicManager(playerManager);
+                    mng = new GuildMusicManager(audioPlayerManager);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }

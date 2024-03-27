@@ -20,6 +20,6 @@ gradle-app.setting
 .idea
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
-config.json
-localization.json
-alina.json
+./config.json
+./localization.json
+./alina.json
