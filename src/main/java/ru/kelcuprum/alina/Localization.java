@@ -51,7 +51,7 @@ public class Localization {
             }
             else text = getJSONFile().get(key).getAsString();
         } catch (Exception ex) {
-            Alina.log(ex.getLocalizedMessage());
+            Alina.log(ex);
             return key;
         }
         return text;
