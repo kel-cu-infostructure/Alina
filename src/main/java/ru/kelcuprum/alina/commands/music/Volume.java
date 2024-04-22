@@ -33,7 +33,7 @@ public class Volume extends AbstractCommand {
             {
                 int newVolume = Math.max(1, Math.min(100, event.getOption("value").getAsInt()));
                 int oldVolume = player.getVolume();
-                Alina.config.setNumber("CURRENT_VOLUME", newVolume);
+                Alina.config.setNumber("MUSIC.CURRENT_VOLUME", newVolume);
                 player.setVolume(newVolume);
                 event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("command.volume.change"), newVolume, oldVolume)).setColor(DEFAULT).build()).queue();
             }

@@ -35,7 +35,7 @@ import static ru.kelcuprum.alina.Alina.Colors.*;
 
 public class PlayerControl extends ListenerAdapter
 {
-    public static final int DEFAULT_VOLUME = Alina.config.getNumber("CURRENT_VOLUME", 5).intValue();
+    public static final int DEFAULT_VOLUME = Alina.config.getNumber("MUSIC.CURRENT_VOLUME", 5).intValue();
 
     public static AudioPlayerManager audioPlayerManager;
     public static Map<String, GuildMusicManager> musicManagers;
@@ -47,31 +47,31 @@ public class PlayerControl extends ListenerAdapter
 
         audioPlayerManager = new DefaultAudioPlayerManager();
         Config config = Alina.config;
-        if (!config.getString("YANDEX_MUSIC_TOKEN", "").isBlank())
-            audioPlayerManager.registerSourceManager(new YandexMusicSourceManager(config.getString("YANDEX_MUSIC_TOKEN", "")));
-        if (!config.getString("FLOWERY_TTS_VOICE", "Alena").isBlank())
-            audioPlayerManager.registerSourceManager(new FloweryTTSSourceManager(config.getString("FLOWERY_TTS_VOICE", "Alena")));
-        if (!config.getString("DEEZER_DECRYPTION_KEY", "").isBlank())
-            audioPlayerManager.registerSourceManager(new DeezerAudioSourceManager(config.getString("DEEZER_DECRYPTION_KEY", "")));
-        if (!config.getString("APPLE_MUSIC_MEDIA_API_TOKEN", "").isBlank() && !config.getString("APPLE_MUSIC_COUNTRY_CODE", "us").isBlank())
-            audioPlayerManager.registerSourceManager(new AppleMusicSourceManager(null, config.getString("APPLE_MUSIC_MEDIA_API_TOKEN", ""), config.getString("APPLE_MUSIC_COUNTRY_CODE", "us"), audioPlayerManager));
-        if (!config.getString("SPOTIFY_CLIENT_ID", "").isBlank() && !config.getString("SPOTIFY_CLIENT_SECRET", "").isBlank() && !config.getString("SPOTIFY_COUNTRY_CODE", "US").isBlank())
-            audioPlayerManager.registerSourceManager(new SpotifySourceManager(null, config.getString("SPOTIFY_CLIENT_ID", ""), config.getString("SPOTIFY_CLIENT_SECRET", ""), config.getString("SPOTIFY_COUNTRY_CODE", "US"), audioPlayerManager));
+        if (!config.getString("MUSIC.YANDEX_MUSIC_TOKEN", "").isBlank())
+            audioPlayerManager.registerSourceManager(new YandexMusicSourceManager(config.getString("MUSIC.YANDEX_MUSIC_TOKEN", "")));
+        if (!config.getString("MUSIC.FLOWERY_TTS_VOICE", "Alena").isBlank())
+            audioPlayerManager.registerSourceManager(new FloweryTTSSourceManager(config.getString("MUSIC.FLOWERY_TTS_VOICE", "Alena")));
+        if (!config.getString("MUSIC.DEEZER_DECRYPTION_KEY", "").isBlank())
+            audioPlayerManager.registerSourceManager(new DeezerAudioSourceManager(config.getString("MUSIC.DEEZER_DECRYPTION_KEY", "")));
+        if (!config.getString("MUSIC.APPLE_MUSIC_MEDIA_API_TOKEN", "").isBlank() && !config.getString("MUSIC.APPLE_MUSIC_COUNTRY_CODE", "us").isBlank())
+            audioPlayerManager.registerSourceManager(new AppleMusicSourceManager(null, config.getString("MUSIC.APPLE_MUSIC_MEDIA_API_TOKEN", ""), config.getString("MUSIC.APPLE_MUSIC_COUNTRY_CODE", "us"), audioPlayerManager));
+        if (!config.getString("MUSIC.SPOTIFY_CLIENT_ID", "").isBlank() && !config.getString("MUSIC.SPOTIFY_CLIENT_SECRET", "").isBlank() && !config.getString("MUSIC.SPOTIFY_COUNTRY_CODE", "US").isBlank())
+            audioPlayerManager.registerSourceManager(new SpotifySourceManager(null, config.getString("MUSIC.SPOTIFY_CLIENT_ID", ""), config.getString("MUSIC.SPOTIFY_CLIENT_SECRET", ""), config.getString("MUSIC.SPOTIFY_COUNTRY_CODE", "US"), audioPlayerManager));
 
-        if (config.getBoolean("ENABLE_YOUTUBE", true)) {
+        if (config.getBoolean("MUSIC.ENABLE_YOUTUBE", true)) {
             final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
             youtube.setPlaylistPageCount(100);
             audioPlayerManager.registerSourceManager(youtube);
         }
-        if (config.getBoolean("ENABLE_SOUNDCLOUD", true))
+        if (config.getBoolean("MUSIC.ENABLE_SOUNDCLOUD", true))
             audioPlayerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        if (config.getBoolean("ENABLE_BANDCAMP", true))
+        if (config.getBoolean("MUSIC.ENABLE_BANDCAMP", true))
             audioPlayerManager.registerSourceManager(new BandcampAudioSourceManager());
-        if (config.getBoolean("ENABLE_VIMEO", true))
+        if (config.getBoolean("MUSIC.ENABLE_VIMEO", true))
             audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
-        if (config.getBoolean("ENABLE_TWITCH", false))
+        if (config.getBoolean("MUSIC.ENABLE_TWITCH", false))
             audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-        if (config.getBoolean("ENABLE_BEAM", true))
+        if (config.getBoolean("MUSIC.ENABLE_BEAM", true))
             audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
         audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
         audioPlayerManager.registerSourceManager(localAudioSourceManager);
