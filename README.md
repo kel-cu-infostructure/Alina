@@ -1,7 +1,7 @@
 <img width="120pt" src="https://cdn.kelcuprum.ru/icons/alinlib.png" align="right">
 <h1> Alina </h1>
 
-Модульный бот и с возможностью кастомизации, который написанный на Java.
+Модульный бот, который написанный на Java.
 
 ### Модули
 - [MODULES.MUSIC] Музыкальная часть бота, которая помогает послушать музыку с другими участниками. Доступные сервисы описаны в [WaterPlayer](https://github.com/kel-cu/waterplayer)
