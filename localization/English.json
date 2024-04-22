@@ -45,6 +45,8 @@
   "command.changelog.description": "Output version information from Modrinth",
   "command.changelog.description.id": "ID Versions from Modrinth",
   "command.changelog.description.role": "Role for mentioning",
+  "command.changelog.more": "More info...",
+  "command.changelog.download": "Download",
   "command.project.description": "Output project information from Modrinth",
   "command.project.description.id": "Project ID from Modrinth",
   "command.project.authors": "Author(s)",

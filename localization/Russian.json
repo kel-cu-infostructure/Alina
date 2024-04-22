@@ -45,6 +45,8 @@
   "command.changelog.description": "Вывод информации о версии из Modrinth",
   "command.changelog.description.id": "ID Версии из Modrinth",
   "command.changelog.description.role": "Роль для упоминание",
+  "command.changelog.more": "Больше информации...",
+  "command.changelog.download": "Скачать",
   "command.project.description": "Вывод информации о проекте из Modrinth",
   "command.project.description.id": "ID Проекта из Modrinth",
   "command.project.authors": "Автор(ы)",
