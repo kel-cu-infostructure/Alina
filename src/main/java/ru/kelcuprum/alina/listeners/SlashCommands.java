@@ -4,8 +4,10 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import org.jetbrains.annotations.NotNull;
 import ru.kelcuprum.alina.Alina;
 import ru.kelcuprum.alina.commands.AbstractCommand;
+import ru.kelcuprum.alina.commands.mods.*;
 import ru.kelcuprum.alina.commands.music.*;
 
 import java.util.ArrayList;
@@ -31,6 +33,11 @@ public class SlashCommands extends ListenerAdapter {
             commands.add(new Stop());
             commands.add(new Volume());
         }
+        if(Alina.config.getBoolean("MODULES.MUSIC", true)) {
+            commands.add(new ChangeLog());
+            commands.add(new Project());
+        }
+
         for(AbstractCommand command : commands){
             Alina.log(String.format("Register command /%s, description: %s", command.getName(), command.getDescription()));
             commandData.add(command.commandData);
@@ -39,7 +46,7 @@ public class SlashCommands extends ListenerAdapter {
     }
 
     @Override
-    public void onSlashCommandInteraction(SlashCommandInteractionEvent event){
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event){
         for(AbstractCommand command : commands){
             if(command.getName().equalsIgnoreCase(event.getName())) {
                 command.execute(event);

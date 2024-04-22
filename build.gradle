@@ -27,9 +27,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // Libs
     implementation shade("ch.qos.logback:logback-classic:1.4.14")
-    implementation shade('net.dv8tion:JDA:5.0.0-beta.21')
+    implementation shade('net.dv8tion:JDA:5.0.0-beta.23')
     // Music
-    implementation shade("dev.arbjerg:lavaplayer:2.1.1")
+    implementation shade("dev.arbjerg:lavaplayer:727959e9f621fc457b3a5adafcfffb55fdeaa538-SNAPSHOT")
     implementation shade('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
     implementation shade("com.github.topi314.lavasrc:lavasrc:4.0.1")
     implementation shade("com.github.topi314.lavasrc:lavasrc-protocol:4.0.1")

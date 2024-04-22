@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import ru.kelcuprum.alina.Alina;
-import ru.kelcuprum.alina.Localization;
 import ru.kelcuprum.alina.commands.AbstractCommand;
 import ru.kelcuprum.alina.music.GuildMusicManager;
 import ru.kelcuprum.alina.music.PlayerControl;
