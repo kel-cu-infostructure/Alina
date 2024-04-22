@@ -27,6 +27,9 @@
 Структура выглядит так:<br>
 **config.json**
 - TOKEN: String - Токен дискорд бота
+- MODULES [Формат: `MODULES.TYPE`]
+  - MUSIC: Boolean - Включать ли модуль музыки
+  - MODRINTH: Boolean - Включить ли модуль Modrinth
 - MUSIC [Формат: `MUSIC.TYPE`]
   - YANDEX_MUSIC_TOKEN: String - Токен пользователя в Я.Музыки
   - DEEZER_DECRYPTION_KEY: String - Ключ Deezer
