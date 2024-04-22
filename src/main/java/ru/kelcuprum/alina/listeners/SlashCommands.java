@@ -33,7 +33,7 @@ public class SlashCommands extends ListenerAdapter {
             commands.add(new Stop());
             commands.add(new Volume());
         }
-        if(Alina.config.getBoolean("MODULES.MUSIC", true)) {
+        if(Alina.config.getBoolean("MODULES.MODRINTH", true)) {
             commands.add(new ChangeLog());
             commands.add(new Project());
         }
