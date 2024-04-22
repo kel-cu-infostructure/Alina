@@ -12,7 +12,7 @@
 
 ![img.png](.img/mr-project.png)
 
-`/play url:https://music.yandex.ru/album/18374095/track/91956076`
+`/play url:https://music.yandex.ru/album/15052792/track/81377650`
 
 ![img.png](.img/ms-play.png)
 
