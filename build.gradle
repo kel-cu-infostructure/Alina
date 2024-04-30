@@ -13,6 +13,7 @@ version = project.version
 repositories {
     mavenCentral()
     maven { url = "https://jitpack.io" }
+    maven { url = "https://repo.u-team.info" }
     maven { url = "https://maven.google.com" }
     maven { url = "https://m2.dv8tion.net/releases" }
     maven { url = "https://maven.topi.wtf/releases" }
@@ -30,7 +31,7 @@ dependencies {
     shadow implementation("ch.qos.logback:logback-classic:1.4.14")
     shadow implementation('net.dv8tion:JDA:5.0.0-beta.23')
     // Music
-    shadow implementation("dev.arbjerg:lavaplayer:727959e9f621fc457b3a5adafcfffb55fdeaa538-SNAPSHOT")
+    shadow implementation("net.hycrafthd.lavaplayer:lavaplayer:2.1.2-SNAPSHOT-j8")
     shadow implementation('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
     shadow implementation("com.github.topi314.lavasrc:lavasrc:4.0.1")
     shadow implementation("com.github.topi314.lavasrc:lavasrc-protocol:4.0.1")
