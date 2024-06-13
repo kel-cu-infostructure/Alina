@@ -15,10 +15,14 @@ import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import dev.lavalink.youtube.clients.AndroidWithThumbnail;
+import dev.lavalink.youtube.clients.MusicWithThumbnail;
+import dev.lavalink.youtube.clients.WebWithThumbnail;
+import dev.lavalink.youtube.clients.skeleton.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -59,7 +63,7 @@ public class PlayerControl extends ListenerAdapter
             audioPlayerManager.registerSourceManager(new SpotifySourceManager(null, config.getString("MUSIC.SPOTIFY_CLIENT_ID", ""), config.getString("MUSIC.SPOTIFY_CLIENT_SECRET", ""), config.getString("MUSIC.SPOTIFY_COUNTRY_CODE", "US"), audioPlayerManager));
 
         if (config.getBoolean("MUSIC.ENABLE_YOUTUBE", true)) {
-            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager();
+            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidWithThumbnail()});
             youtube.setPlaylistPageCount(100);
             audioPlayerManager.registerSourceManager(youtube);
         }
