@@ -40,53 +40,19 @@ public class Project extends AbstractCommand {
                     author.append(user.getAsJsonObject().getAsJsonObject("user").get("username").getAsString());
                 } else author.append(", ").append(user.getAsJsonObject().getAsJsonObject("user").get("username").getAsString());
             }
-            StringBuilder mc_versions = new StringBuilder();
-            boolean isFirstVer = true;
-            JsonArray mc_versions_array = project.getAsJsonArray("game_versions");
-            if(mc_versions_array.size() <= 3) {
-                for (JsonElement mc_version : mc_versions_array) {
-                    if (isFirstVer) {
-                        isFirstVer = false;
-                        mc_versions.append(mc_version.getAsString());
-                    } else mc_versions.append(", ").append(mc_version.getAsString());
-                }
-            } else {
-                mc_versions.append(mc_versions_array.get(0).getAsString()).append(" - ").append(mc_versions_array.get(mc_versions_array.size()-1).getAsString());
-            }
-            StringBuilder loaders = new StringBuilder();
-            boolean isFirstLoa = true;
-            for(JsonElement loader : project.getAsJsonArray("loaders")){
-                String loader_name = switch (loader.getAsString()){
-                    case "fabric" -> "Fabric";
-                    case "quilt" -> "Quilt";
-                    case "forge" -> "Forge";
-                    case "neoforge" -> "NeoForge";
-                    case "modloader" -> "Risugami's ModLoader";
-                    case "rift" -> "Rift";
-                    case "liteloader" -> "LiteLoader";
-                    case "bukkit" -> "Bukkit";
-                    case "bungeecord" -> "BungeeCord";
-                    case "folia" -> "Folia";
-                    case "paper" -> "Paper";
-                    case "purpur" -> "Purpur";
-                    case "spigot" -> "Spigot";
-                    case "sponge" -> "Sponge";
-                    case "velocity" -> "Velocity";
-                    case "waterfall" -> "Waterfall";
-                    default -> loader.getAsString();
-                };
-                if(isFirstLoa){
-                    isFirstLoa = false;
-                    loaders.append(loader_name);
-                } else loaders.append(", ").append(loader_name);
-            }
             embed.addField(Alina.localization.getLocalization("command.project.authors"), author.toString(), true);
-            embed.addField(Alina.localization.getLocalization("command.project.mc_versions"), mc_versions.toString(), true);
-            embed.addField(Alina.localization.getLocalization("command.project.loaders"), loaders.toString(), true);
+            embed.addField(Alina.localization.getLocalization("command.project.mc_versions"), Alina.getMCVersions(project.getAsJsonArray("game_versions")).toString(), true);
+            embed.addField(Alina.localization.getLocalization("command.project.loaders"), Alina.getLoaders(project.getAsJsonArray("loaders")).toString(), true);
 
             embed.addField(Alina.localization.getLocalization("command.project.downloads"), String.valueOf(project.get("downloads").getAsInt()), true);
             embed.addField(Alina.localization.getLocalization("command.project.followers"), String.valueOf(project.get("followers").getAsInt()), true);
-            embed.setFooter(Alina.localization.getLocalization("command.project.license")+": "+project.get("license").getAsJsonObject().get("name").getAsString());
+            String licence = project.get("license").getAsJsonObject().get("name").getAsString();
+            if(licence.isBlank()){
+                if(project.get("license").getAsJsonObject().get("id").getAsString().startsWith("LicenseRef-")){
+                    licence = project.get("license").getAsJsonObject().get("id").getAsString().replace("LicenseRef-", "").replace("-", " ");
+                } else licence = "No Fishes?";
+            }
+            embed.setFooter(Alina.localization.getLocalization("command.project.license")+": "+licence);
             event.replyEmbeds(embed.build()).addActionRow(
                     Button.link(String.format("%s/project/%s", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString()), "Modrinth").withEmoji(Emoji.fromUnicode("🌐")),
                     Button.link(String.format("%s/project/%s/versions", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString()), Alina.localization.getLocalization("command.project.versions")).withEmoji(Emoji.fromUnicode("📃"))

@@ -1,5 +1,7 @@
 package ru.kelcuprum.alina;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -65,5 +67,51 @@ public class Alina extends ListenerAdapter
         int EXCEPTION = LIVE;
         int TRACK = 0xFF79c738;
         int PAUSE = 0xFFf1ae31;
+    }
+
+    public static StringBuilder getLoaders(JsonArray loaders){
+        StringBuilder loadersNames = new StringBuilder();
+        boolean isFirstLoa = true;
+        for(JsonElement loader : loaders){
+            String loader_name = switch (loader.getAsString()){
+                case "fabric" -> "Fabric";
+                case "quilt" -> "Quilt";
+                case "forge" -> "Forge";
+                case "neoforge" -> "NeoForge";
+                case "modloader" -> "Risugami's ModLoader";
+                case "rift" -> "Rift";
+                case "liteloader" -> "LiteLoader";
+                case "bukkit" -> "Bukkit";
+                case "bungeecord" -> "BungeeCord";
+                case "folia" -> "Folia";
+                case "paper" -> "Paper";
+                case "purpur" -> "Purpur";
+                case "spigot" -> "Spigot";
+                case "sponge" -> "Sponge";
+                case "velocity" -> "Velocity";
+                case "waterfall" -> "Waterfall";
+                default -> loader.getAsString();
+            };
+            if(isFirstLoa){
+                isFirstLoa = false;
+                loadersNames.append(loader_name);
+            } else loadersNames.append(", ").append(loader_name);
+        }
+        return loadersNames;
+    }
+    public static StringBuilder getMCVersions(JsonArray versions){
+        StringBuilder mc_versions = new StringBuilder();
+        boolean isFirstVer = true;
+        if(versions.size() <= 3) {
+            for (JsonElement mc_version : versions) {
+                if (isFirstVer) {
+                    isFirstVer = false;
+                    mc_versions.append(mc_version.getAsString());
+                } else mc_versions.append(", ").append(mc_version.getAsString());
+            }
+        } else {
+            mc_versions.append(versions.get(0).getAsString()).append(" - ").append(versions.get(versions.size()-1).getAsString());
+        }
+        return mc_versions;
     }
 }
