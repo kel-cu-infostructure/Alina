@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 import ru.kelcuprum.alina.Alina;
 import ru.kelcuprum.alina.commands.AbstractCommand;
 import ru.kelcuprum.alina.music.GuildMusicManager;
@@ -29,6 +30,7 @@ public class Play extends AbstractCommand {
         } else {
             Guild guild = event.getGuild();
             GuildMusicManager mng = PlayerControl.getMusicManager(guild);
+            event.deferReply().queue();
             PlayerControl.loadAndPlay(mng, event, url, true);
         }
     }

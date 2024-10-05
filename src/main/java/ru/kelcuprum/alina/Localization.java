@@ -19,11 +19,8 @@ public class Localization {
     public JsonObject getJSONFile(){
         try {
             Path localizationFile = Path.of(filePath);
-            if (localizationFile.toFile().exists()) {
-                return GsonHelper.parse(Files.readString(localizationFile));
-            } else {
-                return new JsonObject();
-            }
+            if (localizationFile.toFile().exists()) return GsonHelper.parse(Files.readString(localizationFile));
+            else return new JsonObject();
         } catch (Exception ex){
             Alina.log(ex.getLocalizedMessage());
             return new JsonObject();
@@ -32,11 +29,8 @@ public class Localization {
     public JsonObject getJSONDefaultFile(){
         try {
             InputStream localizationFile = getClass().getResourceAsStream("/localization.json");
-            if (localizationFile != null) {
-                return GsonHelper.parse(new String(localizationFile.readAllBytes(), StandardCharsets.UTF_8));
-            } else {
-                return new JsonObject();
-            }
+            if (localizationFile != null) return GsonHelper.parse(new String(localizationFile.readAllBytes(), StandardCharsets.UTF_8));
+             else return new JsonObject();
         } catch (Exception ex){
             Alina.log(ex);
             return new JsonObject();

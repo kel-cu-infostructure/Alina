@@ -53,6 +53,13 @@ public class Project extends AbstractCommand {
                 } else licence = "No Fishes?";
             }
             embed.setFooter(Alina.localization.getLocalization("command.project.license")+": "+licence);
+            String url = "";
+            for(JsonElement element : project.get("gallery").getAsJsonArray()){
+                JsonObject object = element.getAsJsonObject();
+                if(object.get("featured").getAsBoolean()) url = object.get("url").getAsString();
+            }
+            if(url.isBlank() && !project.get("gallery").getAsJsonArray().isEmpty()) url = project.get("gallery").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString();
+            if(!url.isBlank()) embed.setImage(url);
             event.replyEmbeds(embed.build()).addActionRow(
                     Button.link(String.format("%s/project/%s", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString()), "Modrinth").withEmoji(Emoji.fromUnicode("🌐")),
                     Button.link(String.format("%s/project/%s/versions", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString()), Alina.localization.getLocalization("command.project.versions")).withEmoji(Emoji.fromUnicode("📃"))

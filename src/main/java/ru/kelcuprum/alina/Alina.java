@@ -2,24 +2,35 @@ package ru.kelcuprum.alina;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.ActivityFlag;
+import net.dv8tion.jda.api.entities.RichPresence;
+import net.dv8tion.jda.api.entities.emoji.EmojiUnion;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import ru.kelcuprum.alina.config.Config;
+import ru.kelcuprum.alina.config.GsonHelper;
 import ru.kelcuprum.alina.listeners.SlashCommands;
 import ru.kelcuprum.alina.listeners.VoiceListeners;
 import ru.kelcuprum.alina.music.PlayerControl;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.EnumSet;
 
 public class Alina extends ListenerAdapter
 {
     @Getter
     public static JDA bot;
+    public static Config release = new Config(new JsonObject());
 
     public static Logger LOG = LoggerFactory.getLogger("Alina");
     public static void log(String message) { log(message, Level.INFO);}
@@ -44,11 +55,17 @@ public class Alina extends ListenerAdapter
     }
     public static Localization localization = new Localization("./localization.json");
     public static Config config = new Config("./alina.json");
+    public static Config guildVolume = new Config("./guildVolumes.json");
     public static void main(String[] args)
             throws IllegalArgumentException, InterruptedException {
-        if(config.getString("TOKEN", "").isBlank()){
-            throw new RuntimeException("Discord token not specified, no launch possible!");
+        try {
+            InputStream releaseFile = Alina.class.getResourceAsStream("/release.json");
+            release = new Config(GsonHelper.parse(new String(releaseFile.readAllBytes(), StandardCharsets.UTF_8)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        if(config.getString("TOKEN", "").isBlank())
+            throw new RuntimeException("Discord token not specified, no launch possible!");
         new PlayerControl();
         bot = JDABuilder.createDefault(config.getString("TOKEN", "")) // Use token provided as JVM argument
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -56,7 +73,7 @@ public class Alina extends ListenerAdapter
                 .addEventListeners(new VoiceListeners())
                 .build(); // Build JDA - connect to discord
         bot.awaitReady();
-        log("Hello, world");
+        log(String.format("Hello, world! My version: %s", release.getString("version", "You're a failure!")));
         bot.addEventListener(new SlashCommands(bot));
     }
 

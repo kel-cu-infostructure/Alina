@@ -19,16 +19,18 @@ import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import dev.lavalink.youtube.clients.AndroidWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
+import dev.lavalink.youtube.clients.TvHtml5EmbeddedWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
-import dev.lavalink.youtube.clients.skeleton.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import ru.kelcuprum.alina.Alina;
+import ru.kelcuprum.alina.Colors;
+import ru.kelcuprum.alina.WebAPI;
 import ru.kelcuprum.alina.config.Config;
+import ru.kelcuprum.alina.music.sources.waterplayer.WaterPlayerSource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +41,7 @@ import static ru.kelcuprum.alina.Alina.Colors.*;
 
 public class PlayerControl extends ListenerAdapter
 {
-    public static final int DEFAULT_VOLUME = Alina.config.getNumber("MUSIC.CURRENT_VOLUME", 5).intValue();
+    public static final int DEFAULT_VOLUME = 30;
 
     public static AudioPlayerManager audioPlayerManager;
     public static Map<String, GuildMusicManager> musicManagers;
@@ -51,6 +53,7 @@ public class PlayerControl extends ListenerAdapter
 
         audioPlayerManager = new DefaultAudioPlayerManager();
         Config config = Alina.config;
+        WaterPlayerSource wps = new WaterPlayerSource();
         if (!config.getString("MUSIC.YANDEX_MUSIC_TOKEN", "").isBlank())
             audioPlayerManager.registerSourceManager(new YandexMusicSourceManager(config.getString("MUSIC.YANDEX_MUSIC_TOKEN", "")));
         if (!config.getString("MUSIC.FLOWERY_TTS_VOICE", "Alena").isBlank())
@@ -63,7 +66,7 @@ public class PlayerControl extends ListenerAdapter
             audioPlayerManager.registerSourceManager(new SpotifySourceManager(null, config.getString("MUSIC.SPOTIFY_CLIENT_ID", ""), config.getString("MUSIC.SPOTIFY_CLIENT_SECRET", ""), config.getString("MUSIC.SPOTIFY_COUNTRY_CODE", "US"), audioPlayerManager));
 
         if (config.getBoolean("MUSIC.ENABLE_YOUTUBE", true)) {
-            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true, new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidWithThumbnail()});
+            final YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true, new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5EmbeddedWithThumbnail());
             youtube.setPlaylistPageCount(100);
             audioPlayerManager.registerSourceManager(youtube);
         }
@@ -77,6 +80,7 @@ public class PlayerControl extends ListenerAdapter
             audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
         if (config.getBoolean("MUSIC.ENABLE_BEAM", true))
             audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
+        audioPlayerManager.registerSourceManager(wps);
         audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
         audioPlayerManager.registerSourceManager(localAudioSourceManager);
 
@@ -100,13 +104,21 @@ public class PlayerControl extends ListenerAdapter
             public void trackLoaded(AudioTrack track)
             {
                 EmbedBuilder embed = new EmbedBuilder();
-                if(!MusicParser.isAuthorNull(track)) embed.setAuthor(MusicParser.getAuthor(track));
-                if(track.getInfo().artworkUrl != null) embed.setThumbnail(track.getInfo().artworkUrl);
+                if(!MusicParser.isAuthorNull(track)) {
+                    String url = WebAPI.getAuthorAvatar(track);
+                    if(url.isBlank()) embed.setAuthor(MusicParser.getAuthor(track));
+                    else embed.setAuthor(MusicParser.getAuthor(track), track.getInfo().uri, url);
+                }
+                String url = WebAPI.getArtwork(track);
+                if(!url.isBlank()) embed.setThumbnail(url);
+                else if(track.getInfo().artworkUrl != null) embed.setThumbnail(track.getInfo().artworkUrl);
+                else embed.setThumbnail("https://wf.kelcu.ru/mods/waterplayer/icons/tetra.gif");
+
                 embed.setColor(track.getInfo().isStream ? LIVE : TRACK)
                         .setTitle(MusicParser.getTitle(track), track.getInfo().uri)
                         .setDescription(Alina.localization.getLocalization("player.load."+ (mng.player.getPlayingTrack() == null ? "played" : "queue_added")));
                 mng.scheduler.queue(track);
-                event.replyEmbeds(embed.build()).queue();
+                event.getHook().sendMessageEmbeds(embed.build()).queue();
             }
 
             @Override
@@ -122,7 +134,7 @@ public class PlayerControl extends ListenerAdapter
 
                 if (addPlaylist)
                 {
-                    event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.load.playlist"), playlist.getTracks().size(), playlist.getName())).build()).queue();
+                    event.getHook().sendMessageEmbeds(new EmbedBuilder().setColor(Colors.TETRA).setDescription(String.format(Alina.localization.getLocalization("player.load.playlist"), playlist.getTracks().size(), playlist.getName())).build()).queue();
                     tracks.forEach(mng.scheduler::queue);
                 }
                 else
@@ -135,20 +147,20 @@ public class PlayerControl extends ListenerAdapter
                             .setDescription(Alina.localization.getLocalization("player.load."+ (mng.player.getPlayingTrack() == null ? "played" : "queue_added")))
                             .setFooter(String.format(Alina.localization.getLocalization("player.load.first_playlist"), playlist.getName()));
                     mng.scheduler.queue(firstTrack);
-                    event.replyEmbeds(embed.build()).queue();
+                    event.getHook().sendMessageEmbeds(embed.build()).queue();
                 }
             }
 
             @Override
             public void noMatches()
             {
-                event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.no_matches"), trackUrl)).setColor(DEFAULT).build()).setEphemeral(true).queue();
+                event.getHook().sendMessageEmbeds(new EmbedBuilder().setColor(Colors.CLOWNFISH).setDescription(String.format(Alina.localization.getLocalization("player.no_matches"), trackUrl)).setColor(DEFAULT).build()).setEphemeral(true).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException exception)
             {
-                event.replyEmbeds(new EmbedBuilder().setDescription(String.format(Alina.localization.getLocalization("player.load_failed"), exception.getMessage())).setColor(DEFAULT).build()).setEphemeral(true).queue();
+                event.getHook().sendMessageEmbeds(new EmbedBuilder().setColor(Colors.GROUPIE).setDescription(String.format(Alina.localization.getLocalization("player.load_failed"), exception.getMessage())).setColor(DEFAULT).build()).setEphemeral(true).queue();
             }
         });
     }
@@ -165,7 +177,7 @@ public class PlayerControl extends ListenerAdapter
                 if (mng == null)
                 {
                     mng = new GuildMusicManager(audioPlayerManager);
-                    mng.player.setVolume(DEFAULT_VOLUME);
+                    mng.player.setVolume(Alina.guildVolume.getNumber(guild.getId(), DEFAULT_VOLUME).intValue());
                     musicManagers.put(guildId, mng);
                 }
             }

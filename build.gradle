@@ -8,18 +8,21 @@ apply plugin: 'java'
 
 archives_base_name = project.archives_base_name
 group = project.maven_group
-version = project.version
+
+static def getDate() {
+    return new Date().format('yyyy.MM.dd HH-mm')
+}
+version = "${getDate()}"
 
 repositories {
     mavenCentral()
-    maven { url = "https://jitpack.io" }
-    maven { url = "https://maven.google.com" }
-    maven { url = "https://m2.dv8tion.net/releases" }
+    maven { url = "https://jitpack.io/" }
     maven { url = "https://maven.topi.wtf/releases" }
-    maven { url = "https://maven.arbjerg.dev/releases" }
-    maven { url = "https://maven.arbjerg.dev/snapshots" }
+    maven { url = "https://maven.topi.wtf/snapshots" }
+    maven { url = "https://maven.lavalink.dev/releases" }
+    maven { url = "https://maven.lavalink.dev/snapshots" }
+    maven { url = "https://s01.oss.sonatype.org/content/repositories/releases" }
 }
-
 configurations { shadow }
 dependencies {
     shadow implementation('org.projectlombok:lombok:1.18.26')
@@ -28,15 +31,24 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // Libs
     shadow implementation("ch.qos.logback:logback-classic:1.4.14")
-    shadow implementation('net.dv8tion:JDA:5.0.0-beta.24')
+    shadow implementation('net.dv8tion:JDA:5.1.1')
     // Music
     shadow implementation("dev.arbjerg:lavaplayer:${project.lavaplayer}")
     shadow implementation("dev.lavalink.youtube:v2:${project.youtube_source}")
     shadow implementation('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
-    shadow implementation("com.github.topi314.lavasrc:lavasrc:4.1.1")
-    shadow implementation("com.github.topi314.lavasrc:lavasrc-protocol:4.1.1")
+    shadow implementation("com.github.topi314.lavasrc:lavasrc:${project.lavasrc}")
+    shadow implementation("com.github.topi314.lavasrc:lavasrc-protocol:${project.lavasrc}")
     // JSON
     shadow implementation("com.google.code.gson:gson:2.10.1")
+}
+
+processResources {
+    inputs.property "version", project.version
+    filteringCharset "UTF-8"
+
+    filesMatching("release.json") {
+        expand "version": project.version
+    }
 }
 
 def targetJavaVersion = 17

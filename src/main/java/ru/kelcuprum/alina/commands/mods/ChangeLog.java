@@ -42,12 +42,13 @@ public class ChangeLog extends AbstractCommand {
                 else Alina.log(arg);
             }
             if(versionNameForTitle.isEmpty()) versionNameForTitle = new StringBuilder(versionName);
+            String ver = versionNameForTitle.toString().replaceAll("\\[[^\\[]+(?=])]", "")
+                    .replaceAll("\\([^\\[]+(?=])\\)", "");
             EmbedBuilder embed = new EmbedBuilder()
-                    .setAuthor(author.get("username").getAsString(), String.format("%s/user/%s", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), author.get("username").getAsString()), author.get("avatar_url").getAsString())
-                    .setTitle(String.format("%s > %s", project.get("title").getAsString(), versionNameForTitle), String.format("%s/project/%s/version/%s", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString(), version.get("id").getAsString()))
+                    .setAuthor(String.format("%s > %s", project.get("title").getAsString(), ver), String.format("%s/project/%s/version/%s", Alina.config.getString("modrinth-site", "https://staging.modrinth.com"), project.get("id").getAsString(), version.get("id").getAsString()), project.get("icon_url").getAsString())
                     .setColor(type.equals("alpha") ? Colors.GROUPIE : type.equals("beta") ? Colors.CLOWNFISH : Colors.SEADRIVE)
                     .setDescription(version.get("changelog").getAsString())
-                    .addField(Alina.localization.getLocalization("command.project.mc_versions"), Alina.getMCVersions(version.getAsJsonArray("game_versions")).toString(), true);
+                    .setFooter(author.get("username").getAsString(), author.get("avatar_url").getAsString());
 
             StringBuilder mc_versions = Alina.getMCVersions(project.getAsJsonArray("game_versions"));
             if(event.getOption("show_loader") != null && event.getOption("show_loader").getAsBoolean()){
@@ -76,7 +77,6 @@ public class ChangeLog extends AbstractCommand {
     }
     public boolean isLoaderName(String arg, JsonObject version){
         boolean bl = false;
-//        version.getAsJsonArray("loaders")
         for(JsonElement element : version.getAsJsonArray("loaders")){
             if(arg.toLowerCase().contains(element.getAsString())){
                 bl = true;
