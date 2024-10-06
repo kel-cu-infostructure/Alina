@@ -45,6 +45,8 @@
   "command.changelog.description": "Вывод информации о версии из Modrinth",
   "command.changelog.description.id": "ID Версии из Modrinth",
   "command.changelog.description.role": "Роль для упоминание",
+  "command.changelog.description.show_loader": "Показать загрузчик(и)",
+  "command.changelog.description.show_versions": "Показать версии игры",
   "command.changelog.more": "Больше информации...",
   "command.changelog.download": "Скачать",
   "command.project.description": "Вывод информации о проекте из Modrinth",
@@ -61,6 +63,12 @@
   "command.me.description": "Обо мне 👉👈",
   "command.me": "Я бот для выполнения различных задач.\nМузыка, показ проектов Modrinth и многое другое!",
   "command.me.version": "⚙ Моя версия",
+  "command.me.uptime": "⏲ Бот запущен",
+  "command.me.footer": "Сделано с ❤ от Кела",
+
+  "command.avatar.description": "Аватарка пользователя",
+  "command.avatar.user.description": "Сам пользователь",
+  "command.avatar": "Аватарка %s",
 
   "player.load.played": "Трек поставлен на воспроизведение",
   "player.load.queue_added": "Трек добавлен в очередь",

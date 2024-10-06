@@ -117,7 +117,7 @@ public class WebAPI {
             return "";
         }
     }
-    protected static String uriEncode(String uri){
+    public static String uriEncode(String uri){
         return URLEncoder.encode(uri, StandardCharsets.UTF_8);
     }
 }

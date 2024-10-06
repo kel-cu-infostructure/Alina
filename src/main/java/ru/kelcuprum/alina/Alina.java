@@ -53,6 +53,7 @@ public class Alina extends ListenerAdapter
             case TRACE -> LOG.trace(message.getLocalizedMessage(), message.fillInStackTrace());
         }
     }
+    public static long startedTime = 0;
     public static Localization localization = new Localization("./localization.json");
     public static Config config = new Config("./alina.json");
     public static Config guildVolume = new Config("./guildVolumes.json");
@@ -73,6 +74,7 @@ public class Alina extends ListenerAdapter
                 .addEventListeners(new VoiceListeners())
                 .build(); // Build JDA - connect to discord
         bot.awaitReady();
+        startedTime = System.currentTimeMillis();
         log(String.format("Hello, world! My version: %s", release.getString("version", "You're a failure!")));
         bot.addEventListener(new SlashCommands(bot));
     }

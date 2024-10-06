@@ -25,6 +25,7 @@ public class ChangeLog extends AbstractCommand {
                         .addOption(OptionType.STRING, "id", Alina.localization.getLocalization("command.changelog.description.id"), true)
                         .addOption(OptionType.ROLE, "role", Alina.localization.getLocalization("command.changelog.description.role"), false)
                         .addOption(OptionType.BOOLEAN, "show_loader", Alina.localization.getLocalization("command.changelog.description.show_loader"), false)
+                        .addOption(OptionType.BOOLEAN, "show_versions", Alina.localization.getLocalization("command.changelog.description.show_versions"), false)
         );
     }
 
@@ -51,11 +52,13 @@ public class ChangeLog extends AbstractCommand {
                     .setFooter(author.get("username").getAsString(), author.get("avatar_url").getAsString());
 
             StringBuilder mc_versions = Alina.getMCVersions(project.getAsJsonArray("game_versions"));
-            if(event.getOption("show_loader") != null && event.getOption("show_loader").getAsBoolean()){
+            if(event.getOption("show_versions") != null && event.getOption("show_loader").getAsBoolean())
+                embed.addField(Alina.localization.getLocalization("command.project.mc_versions"), mc_versions.toString(), true);
+
+            if(event.getOption("show_loader") != null && event.getOption("show_loader").getAsBoolean())
                 embed.addField(Alina.localization.getLocalization("command.project.loaders"), Alina.getLoaders(version.getAsJsonArray("loaders")).toString(), true);
-            }
-            boolean isForPublic = event.getChannel() instanceof NewsChannel;
-            boolean isPermissions = event.getMember().hasPermission(Permission.MESSAGE_MENTION_EVERYONE);
+            boolean isForPublic = event.isFromGuild() && event.getChannel() instanceof NewsChannel;
+            boolean isPermissions = event.isFromGuild() && event.getMember().hasPermission(Permission.MESSAGE_MENTION_EVERYONE);
             if(isForPublic){
                 event.reply(":+1:").setEphemeral(true).queue();
                 event.getChannel().sendMessageEmbeds(embed.build()).setContent((event.getOption("role") != null && isPermissions) ? event.getOption("role").getAsRole().getAsMention() : "")

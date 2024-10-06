@@ -31,11 +31,11 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     // Libs
     shadow implementation("ch.qos.logback:logback-classic:1.4.14")
-    shadow implementation('net.dv8tion:JDA:5.1.1')
+    shadow implementation('net.dv8tion:JDA:5.1.2')
     // Music
     shadow implementation("dev.arbjerg:lavaplayer:${project.lavaplayer}")
     shadow implementation("dev.lavalink.youtube:v2:${project.youtube_source}")
-    shadow implementation('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
+//    shadow implementation('com.github.aikaterna:lavaplayer-natives:original-SNAPSHOT')
     shadow implementation("com.github.topi314.lavasrc:lavasrc:${project.lavasrc}")
     shadow implementation("com.github.topi314.lavasrc:lavasrc-protocol:${project.lavasrc}")
     // JSON

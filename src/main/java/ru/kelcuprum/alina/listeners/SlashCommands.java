@@ -7,11 +7,13 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
 import ru.kelcuprum.alina.Alina;
 import ru.kelcuprum.alina.commands.AbstractCommand;
-import ru.kelcuprum.alina.commands.about.Me;
+import ru.kelcuprum.alina.commands.about.Bot;
 import ru.kelcuprum.alina.commands.mods.*;
 import ru.kelcuprum.alina.commands.music.*;
+import ru.kelcuprum.alina.commands.utils.Artwork;
+import ru.kelcuprum.alina.commands.utils.Avatar;
 
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,11 +22,12 @@ public class SlashCommands extends ListenerAdapter {
     public List<AbstractCommand> commands = new ArrayList<>();
     public SlashCommands(JDA bot) {
         Collection<CommandData> commandData = new ArrayList<>();
-        InputStream changelog = Alina.class.getResourceAsStream("/changelog.md");
-        if(changelog != null){
-
+//        InputStream changelog = Alina.class.getResourceAsStream("/changelog.md");
+        commands.add(new Bot());
+        if(Alina.config.getBoolean("MODULES.UTILS", true)){
+            commands.add(new Avatar());
+            commands.add(new Artwork());
         }
-        commands.add(new Me());
         if(Alina.config.getBoolean("MODULES.MUSIC", true)){
             commands.add(new Join());
             commands.add(new Leave());
